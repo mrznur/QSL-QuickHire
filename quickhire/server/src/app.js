@@ -3,6 +3,9 @@ import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 
+import jobsRoutes from "./routes/jobs.js";
+import applicationsRoutes from "./routes/applications.js";
+
 dotenv.config();
 
 const app = express();
@@ -15,6 +18,9 @@ connectDB();
 app.get("/", (req, res) => {
   res.json({ message: "QuickHire API running" });
 });
+
+app.use("/api/jobs", jobsRoutes);
+app.use("/api/applications", applicationsRoutes);
 
 const PORT = process.env.PORT || 5000;
 
