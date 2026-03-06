@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import connectDB from "./config/db.js";
+import mongoose from "mongoose";
 
 import jobsRoutes from "./routes/jobs.js";
 import applicationsRoutes from "./routes/applications.js";
@@ -10,17 +10,27 @@ dotenv.config();
 
 const app = express();
 
-// Connect to MongoDB (async for serverless)
-let isConnected = false;
-const ensureConnection = async () => {
-  if (!isConnected) {
-    await connectDB();
-    isConnected = true;
-  }
-};
+// MongoDB connection for serverless
+let cachedDb = null;
 
-// Initialize connection
-ensureConnection();
+async function connectToDatabase() {
+  if (cachedDb && mongoose.connection.readyState === 1) {
+    return cachedDb;
+  }
+
+  try {
+    await mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 5000,
+    });
+    cachedDb = mongoose.connection;
+    console.log("MongoDB connected");
+    return cachedDb;
+  } catch (error) {
+    console.error("MongoDB connection error:", error.message);
+    throw error;
+  }
+}
 
 app.use(cors({
   origin: '*',
@@ -30,14 +40,27 @@ app.use(cors({
 }));
 app.use(express.json());
 
-app.get("/", (req, res) => {
+// Middleware to ensure DB connection for API routes
+app.use('/api', async (req, res, next) => {
+  try {
+    await connectToDatabase();
+    next();
+  } catch (error) {
+    res.status(503).json({ 
+      message: "Database connection failed",
+      error: error.message 
+    });
+  }
+});
+
+app.get("/", (_req, res) => {
   res.json({ message: "QuickHire API running" });
 });
 
-app.get("/health", async (req, res) => {
+app.get("/health", async (_req, res) => {
   try {
-    const mongoose = await import('mongoose');
-    const dbState = mongoose.default.connection.readyState;
+    await connectToDatabase();
+    const dbState = mongoose.connection.readyState;
     const states = ['disconnected', 'connected', 'connecting', 'disconnecting'];
     
     res.json({ 
