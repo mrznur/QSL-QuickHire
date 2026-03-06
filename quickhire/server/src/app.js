@@ -10,6 +10,9 @@ dotenv.config();
 
 const app = express();
 
+// Connect to MongoDB
+connectDB();
+
 app.use(cors({
   origin: [
     'http://localhost:5173', 
@@ -34,9 +37,10 @@ app.use("/api/applications", applicationsRoutes);
 
 const PORT = process.env.PORT || 5000;
 
-(async () => {
-  await connectDB();
+if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
-})();
+}
+
+export default app;

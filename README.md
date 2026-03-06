@@ -14,9 +14,7 @@ A job board where people can find jobs and apply, and admins can post/manage lis
 **Frontend:** React + Vite, Tailwind CSS, React Router  
 **Backend:** Node.js, Express, MongoDB
 
-## Getting started
-
-You'll need Node.js and MongoDB installed.
+## Local Setup
 
 ### Backend
 
@@ -25,14 +23,14 @@ cd server
 npm install
 ```
 
-Create a `.env` file:
+Create `.env`:
 ```
 PORT=5000
 MONGO_URI=mongodb://127.0.0.1:27017/quickhire
 ADMIN_KEY=supersecret
 ```
 
-Make sure MongoDB is running, then seed the database:
+Run it:
 ```bash
 node src/seed.js
 npm run dev
@@ -45,113 +43,111 @@ cd client
 npm install
 ```
 
-Create a `.env` file:
+Create `.env`:
 ```
 VITE_API_BASE_URL=http://localhost:5000
 VITE_ADMIN_KEY=supersecret
 ```
 
-Start it up:
+Run it:
 ```bash
 npm run dev
 ```
 
-Open http://localhost:5173
+## Deploy to Vercel
 
-## Admin access
+### 1. Setup MongoDB Atlas
 
-Go to `/login` and enter `supersecret` as the admin key. You can then add jobs, delete them, and view applications.
+- Go to mongodb.com/cloud/atlas
+- Create free cluster
+- Database Access → Add user with password
+- Network Access → Add IP `0.0.0.0/0`
+- Get connection string
 
-## Project structure
+### 2. Deploy Backend
 
-```
-client/
-  src/
-    api/          - API calls
-    components/   - React components
-    pages/        - Main pages
-    utils/        - Helper functions
-
-server/
-  src/
-    config/       - DB setup
-    models/       - Mongoose schemas
-    routes/       - API endpoints
-    middleware/   - Auth stuff
-```
-
-## API
-
-**Jobs**
-- `GET /api/jobs` - list all jobs (supports ?search, ?category, ?location)
-- `GET /api/jobs/:id` - get one job
-- `POST /api/jobs` - create job (needs admin key)
-- `DELETE /api/jobs/:id` - delete job (needs admin key)
-
-**Applications**
-- `GET /api/applications` - list all (needs admin key)
-- `POST /api/applications` - submit application
-- `DELETE /api/applications/:id` - delete (needs admin key)
-
-## Deploying to Render
-
-### Quick setup
-
-1. Push your code to GitHub
-2. Sign up at [render.com](https://render.com)
-3. Create a MongoDB Atlas database (free tier works)
-4. Deploy backend and frontend separately
-
-### Backend deployment
-
-1. New Web Service → Connect your repo
-2. Settings:
-   - Root Directory: `server`
-   - Build Command: `npm install`
-   - Start Command: `npm start`
-3. Add environment variables:
-   - `MONGO_URI` - your MongoDB Atlas connection string
-   - `ADMIN_KEY` - your admin password
-   - `FRONTEND_URL` - your frontend URL (add after frontend is deployed)
-4. Deploy and copy the backend URL
-
-### Frontend deployment
-
-1. New Static Site → Connect your repo
-2. Settings:
-   - Root Directory: `client`
-   - Build Command: `npm install && npm run build`
-   - Publish Directory: `dist`
-3. Add environment variables:
-   - `VITE_API_BASE_URL` - your backend URL from step above
-   - `VITE_ADMIN_KEY` - same as backend
-4. Deploy
-
-### Seed the database
-
-After backend is deployed, go to Shell tab in Render and run:
 ```bash
+cd server
+vercel
+```
+
+Or via Vercel dashboard:
+- New Project → Import your repo
+- Root Directory: `server`
+- Framework Preset: Other
+- Build Command: (leave empty)
+- Output Directory: (leave empty)
+
+Add environment variables:
+- `MONGO_URI` - your MongoDB Atlas connection string
+- `ADMIN_KEY` - your admin password
+- `PORT` - 10000
+
+Copy your backend URL (e.g., `https://your-backend.vercel.app`)
+
+### 3. Deploy Frontend
+
+```bash
+cd client
+vercel
+```
+
+Or via dashboard:
+- New Project → Import your repo
+- Root Directory: `client`
+- Framework Preset: Vite
+- Build Command: `npm run build`
+- Output Directory: `dist`
+
+Add environment variables:
+- `VITE_API_BASE_URL` - your backend URL from step 2
+- `VITE_ADMIN_KEY` - same as backend
+
+### 4. Seed Database
+
+After backend is deployed, run locally:
+```bash
+cd server
+# Update .env with production MONGO_URI
 node src/seed.js
 ```
 
-### MongoDB Atlas setup
+Done! Your app is live.
 
-1. Create free cluster at [mongodb.com/cloud/atlas](https://www.mongodb.com/cloud/atlas)
-2. Create database user
-3. Network Access → Add IP: `0.0.0.0/0` (allow all)
-4. Get connection string and use as `MONGO_URI`
+## Admin Access
 
-That's it. Your app should be live.
+Go to `/login` and enter your admin key to manage jobs and view applications.
+
+## API Endpoints
+
+**Jobs**
+- `GET /api/jobs` - list jobs
+- `GET /api/jobs/:id` - get one job
+- `POST /api/jobs` - create (admin)
+- `DELETE /api/jobs/:id` - delete (admin)
+
+**Applications**
+- `GET /api/applications` - list all (admin)
+- `POST /api/applications` - submit application
+- `DELETE /api/applications/:id` - delete (admin)
 
 ## Notes
 
-- The regex validation for URLs was causing issues with Google Drive links, so I simplified it to just check if the URL starts with "http"
-- Applications are saved to the database but the save happens in a try-catch so the user still gets a success message even if MongoDB has issues
-- The seed script adds 36 sample jobs - first 8 are featured, next 8 are latest
+- URL validation simplified for Google Drive links
+- Applications save with try-catch for MongoDB reliability
+- 36 sample jobs in seed script
 
-## Known issues
+## Troubleshooting
 
-- MongoDB write operations can be slow sometimes, but the app handles it gracefully
-- The navbar admin check uses sessionStorage which doesn't sync across tabs
+**MongoDB connection fails:**
+- Check IP whitelist includes 0.0.0.0/0
+- Verify password in connection string
+- Add `/quickhire` database name to connection string
 
-That's pretty much it. Clone it, run it, break it, fix it.
+**CORS errors:**
+- Update backend CORS to include frontend URL
+- Check environment variables are set correctly
+
+**Vercel timeout:**
+- Vercel free tier has 10s function timeout
+- Database operations should complete within this
