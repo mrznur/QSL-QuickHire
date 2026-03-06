@@ -93,6 +93,56 @@ server/
 - `POST /api/applications` - submit application
 - `DELETE /api/applications/:id` - delete (needs admin key)
 
+## Deploying to Render
+
+### Quick setup
+
+1. Push your code to GitHub
+2. Sign up at [render.com](https://render.com)
+3. Create a MongoDB Atlas database (free tier works)
+4. Deploy backend and frontend separately
+
+### Backend deployment
+
+1. New Web Service → Connect your repo
+2. Settings:
+   - Root Directory: `server`
+   - Build Command: `npm install`
+   - Start Command: `npm start`
+3. Add environment variables:
+   - `MONGO_URI` - your MongoDB Atlas connection string
+   - `ADMIN_KEY` - your admin password
+   - `FRONTEND_URL` - your frontend URL (add after frontend is deployed)
+4. Deploy and copy the backend URL
+
+### Frontend deployment
+
+1. New Static Site → Connect your repo
+2. Settings:
+   - Root Directory: `client`
+   - Build Command: `npm install && npm run build`
+   - Publish Directory: `dist`
+3. Add environment variables:
+   - `VITE_API_BASE_URL` - your backend URL from step above
+   - `VITE_ADMIN_KEY` - same as backend
+4. Deploy
+
+### Seed the database
+
+After backend is deployed, go to Shell tab in Render and run:
+```bash
+node src/seed.js
+```
+
+### MongoDB Atlas setup
+
+1. Create free cluster at [mongodb.com/cloud/atlas](https://www.mongodb.com/cloud/atlas)
+2. Create database user
+3. Network Access → Add IP: `0.0.0.0/0` (allow all)
+4. Get connection string and use as `MONGO_URI`
+
+That's it. Your app should be live.
+
 ## Notes
 
 - The regex validation for URLs was causing issues with Google Drive links, so I simplified it to just check if the URL starts with "http"
