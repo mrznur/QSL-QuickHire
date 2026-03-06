@@ -12,7 +12,7 @@ router.get("/", async (req, res) => {
     const filter = {};
 
     if (category) filter.category = category;
-    if (location) filter.location = location;
+    if (location) filter.location = { $regex: location, $options: "i" };
 
     if (search) {
       filter.$or = [
@@ -21,7 +21,7 @@ router.get("/", async (req, res) => {
       ];
     }
 
-    const jobs = await Job.find(filter).sort({ createdAt: -1 });
+    const jobs = await Job.find(filter).sort({ createdAt: 1 });
 
     res.json(jobs);
   } catch (err) {

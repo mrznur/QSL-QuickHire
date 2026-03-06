@@ -1,18 +1,11 @@
-function CategoryCard({ title, jobs, icon, active, onClick }) {
+function CategoryCard({ title, jobs, icon, onClick }) {
   return (
     <div
       onClick={onClick}
-      className={`cursor-pointer border-2 rounded-md p-5 transition-all flex flex-col justify-between h-full group
-      ${
-        active
-          ? "bg-[#4640DE] text-white border-[#4640DE]"
-          : "bg-white hover:bg-[#4640DE] hover:text-white hover:border-[#4640DE]"
-      }`}
+      className="cursor-pointer border-2 rounded-md p-5 transition-all flex flex-col justify-between h-full group font-epilogue bg-white hover:bg-[#4640DE] hover:text-white hover:border-[#4640DE]"
     >
       <div>
-        <div
-          className={`text-3xl mb-4 ${active ? "text-white" : "text-[#4640DE] group-hover:text-white"}`}
-        >
+        <div className="text-3xl mb-4 text-[#4640DE] group-hover:text-white">
           <i className={icon}></i>
         </div>
         <h3 className="font-semibold text-xl font-clash">{title}</h3>

@@ -4,7 +4,7 @@ import Navbar from "../../components/Navbar/Navbar.jsx";
 import Footer from "../../components/Footer/Footer.jsx";
 import { applyToJob, getJobById } from "../../api/api.js";
 
-export default function JobDetails() {
+function JobDetails() {
   const { id } = useParams();
 
   const [job, setJob] = useState(null);
@@ -53,80 +53,113 @@ export default function JobDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-base-200">
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
 
-      <div className="container mx-auto px-4 py-8">
-        <Link to="/" className="link link-hover opacity-80">
-          ← Back to jobs
+      <div className="container mx-auto px-8 md:px-12 lg:px-16 py-10">
+        <Link to="/jobs" className="text-[#4640DE] hover:underline font-epilogue flex items-center gap-2">
+          <i className="fas fa-arrow-left"></i> Back to jobs
         </Link>
 
         {loading ? (
-          <div className="flex justify-center py-10">
-            <span className="loading loading-spinner loading-lg" />
+          <div className="flex justify-center py-20">
+            <span className="loading loading-spinner loading-lg text-[#4640DE]" />
           </div>
         ) : err ? (
-          <div className="alert alert-error mt-6">{err}</div>
+          <div className="alert alert-error mt-6 font-epilogue">{err}</div>
         ) : !job ? (
-          <div className="alert mt-6">Job not found.</div>
+          <div className="alert mt-6 font-epilogue">Job not found.</div>
         ) : (
-          <div className="grid lg:grid-cols-3 gap-6 mt-6">
+          <div className="grid lg:grid-cols-3 gap-8 mt-8">
             <div className="lg:col-span-2">
-              <div className="card bg-base-100 border">
-                <div className="card-body">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <h1 className="text-2xl font-bold">{job.title}</h1>
-                      <p className="opacity-80 mt-1">{job.company}</p>
-                    </div>
-                    <div className="badge badge-outline">{job.jobType}</div>
+              <div className="bg-white rounded-lg shadow-sm p-8 border border-gray-100">
+                <div className="flex items-start gap-6">
+                  <div className="w-16 h-16 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
+                    <img
+                      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(job.company)}&background=4640DE&color=fff&size=64`}
+                      alt={job.company}
+                      className="w-16 h-16 rounded-lg"
+                    />
                   </div>
 
-                  <div className="flex flex-wrap gap-2 mt-3">
-                    <span className="badge badge-ghost">{job.category}</span>
-                    <span className="badge badge-ghost">{job.location}</span>
-                    {job.salaryRange ? (
-                      <span className="badge badge-ghost">
-                        {job.salaryRange}
+                  <div className="flex-1">
+                    <h1 className="text-3xl font-bold font-clash text-gray-900">{job.title}</h1>
+                    <p className="text-xl text-gray-600 font-epilogue mt-2">{job.company}</p>
+
+                    <div className="flex flex-wrap gap-3 mt-4">
+                      <span className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-epilogue flex items-center gap-2">
+                        <i className="fas fa-map-marker-alt"></i>
+                        {job.location}
                       </span>
-                    ) : null}
+                      <span className="px-4 py-2 border-2 border-[#FFB836] text-[#FFB836] bg-[#FFF4E5] rounded-lg font-epilogue">
+                        {job.jobType}
+                      </span>
+                      <span className="px-4 py-2 bg-[#4640DE] bg-opacity-10 text-[#4640DE] rounded-lg font-epilogue">
+                        {job.category}
+                      </span>
+                      {job.salaryRange && (
+                        <span className="px-4 py-2 bg-green-50 text-green-700 rounded-lg font-epilogue flex items-center gap-2">
+                          <i className="fas fa-dollar-sign"></i>
+                          {job.salaryRange}
+                        </span>
+                      )}
+                    </div>
                   </div>
-
-                  <div className="divider" />
-
-                  <h2 className="font-semibold text-lg">Job Description</h2>
-                  <p className="opacity-90 whitespace-pre-line mt-2">
-                    {job.description}
-                  </p>
                 </div>
+
+                <div className="border-t border-gray-200 my-8"></div>
+
+                <h2 className="text-2xl font-semibold font-clash text-gray-900 mb-4">Job Description</h2>
+                <p className="text-gray-700 font-epilogue leading-relaxed whitespace-pre-line">
+                  {job.description}
+                </p>
               </div>
             </div>
 
             <div>
-              <div className="card bg-base-100 border">
-                <div className="card-body">
-                  <h2 className="text-lg font-bold">Apply Now</h2>
+              <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-100 sticky top-8">
+                <h2 className="text-2xl font-bold font-clash text-gray-900 mb-6">Apply Now</h2>
 
-                  {successMsg ? (
-                    <div className="alert alert-success mt-3">{successMsg}</div>
-                  ) : null}
-                  {err ? (
-                    <div className="alert alert-error mt-3">{err}</div>
-                  ) : null}
+                {successMsg && (
+                  <div className="bg-green-50 border-2 border-green-500 rounded-lg p-6 mb-6">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+                        <i className="fas fa-check text-white text-2xl"></i>
+                      </div>
+                      <h3 className="text-xl font-bold text-green-800 font-clash">Congratulations!</h3>
+                    </div>
+                    <p className="text-green-700 font-epilogue leading-relaxed">
+                      Your application has been submitted successfully. The hiring team will review your application and get back to you soon. Good luck!
+                    </p>
+                  </div>
+                )}
+                {err && (
+                  <div className="alert alert-error mb-4 font-epilogue">{err}</div>
+                )}
 
-                  <form className="mt-3 space-y-3" onSubmit={submit}>
+                <form className="space-y-4" onSubmit={submit}>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2 font-epilogue">
+                      Full Name
+                    </label>
                     <input
-                      className="input input-bordered w-full"
-                      placeholder="Your name"
+                      className="input input-bordered w-full font-epilogue"
+                      placeholder="John Doe"
                       value={form.name}
                       onChange={(e) =>
                         setForm((p) => ({ ...p, name: e.target.value }))
                       }
                       required
                     />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2 font-epilogue">
+                      Email Address
+                    </label>
                     <input
-                      className="input input-bordered w-full"
-                      placeholder="Email"
+                      className="input input-bordered w-full font-epilogue"
+                      placeholder="john@example.com"
                       type="email"
                       value={form.email}
                       onChange={(e) =>
@@ -134,37 +167,48 @@ export default function JobDetails() {
                       }
                       required
                     />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2 font-epilogue">
+                      Resume Link
+                    </label>
                     <input
-                      className="input input-bordered w-full"
-                      placeholder="Resume link (Google Drive / Dropbox)"
+                      className="input input-bordered w-full font-epilogue"
+                      placeholder="https://drive.google.com/..."
                       value={form.resumeLink}
                       onChange={(e) =>
                         setForm((p) => ({ ...p, resumeLink: e.target.value }))
                       }
                       required
                     />
+                    <p className="text-xs text-gray-500 mt-1 font-epilogue">
+                      Google Drive, Dropbox, or any public link
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2 font-epilogue">
+                      Cover Note (Optional)
+                    </label>
                     <textarea
-                      className="textarea textarea-bordered w-full"
-                      placeholder="Cover note (optional)"
+                      className="textarea textarea-bordered w-full font-epilogue"
+                      placeholder="Tell us why you're a great fit..."
                       rows={4}
                       value={form.coverNote}
                       onChange={(e) =>
                         setForm((p) => ({ ...p, coverNote: e.target.value }))
                       }
                     />
+                  </div>
 
-                    <button
-                      className={`btn btn-primary w-full ${submitting ? "btn-disabled" : ""}`}
-                      type="submit"
-                    >
-                      {submitting ? "Submitting..." : "Submit Application"}
-                    </button>
-                  </form>
-
-                  <p className="text-xs opacity-70 mt-3">
-                    Tip: use a public resume link (view permission enabled).
-                  </p>
-                </div>
+                  <button
+                    className={`btn bg-[#4640DE] hover:bg-[#3730a3] text-white w-full font-semibold font-epilogue border-none ${submitting ? "btn-disabled" : ""}`}
+                    type="submit"
+                  >
+                    {submitting ? "Submitting..." : "Submit Application"}
+                  </button>
+                </form>
               </div>
             </div>
           </div>
@@ -175,3 +219,5 @@ export default function JobDetails() {
     </div>
   );
 }
+
+export default JobDetails;

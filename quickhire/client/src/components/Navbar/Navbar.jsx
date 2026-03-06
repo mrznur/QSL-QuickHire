@@ -1,21 +1,39 @@
 import { Link, NavLink } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Logo from "../../assets/Logo.png";
 
 function Navbar() {
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    // Check if admin is logged in
+    const adminKey = sessionStorage.getItem("adminKey");
+    setIsAdmin(!!adminKey);
+
+    // Listen for storage changes (login/logout)
+    const handleStorageChange = () => {
+      const key = sessionStorage.getItem("adminKey");
+      setIsAdmin(!!key);
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
   const navLinks = (
     <>
       <li>
         <NavLink
           to="/"
           className={({ isActive }) =>
-            isActive ? "text-xl font-semibold text-gray-500" : "opacity-80"
+            isActive ? "text-lg font-semibold text-gray-500 font-epilogue" : "text-lg opacity-80 font-epilogue"
           }
         >
           Find Jobs
         </NavLink>
       </li>
       <li>
-        <a className="text-xl font-semibold cursor-pointer text-gray-500">
+        <a className="text-lg cursor-pointer text-gray-500 font-epilogue">
           Browse Companies
         </a>
       </li>
@@ -24,7 +42,7 @@ function Navbar() {
   );
 
   return (
-    <div className="navbar bg-base-100 sticky top-0 z-50">
+    <div className="navbar bg-base-100 sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-8 md:px-12 lg:px-16 flex justify-between items-center">
         <div className="navbar-start">
           <Link to="/">
@@ -32,7 +50,7 @@ function Navbar() {
           </Link>
           <Link
             to="/"
-            className="btn btn-ghost text-xl lg:text-3xl font-bold gap-0"
+            className="btn btn-ghost text-xl lg:text-3xl font-bold gap-0 font-redhat"
           >
             QuickHire
           </Link>
@@ -46,14 +64,22 @@ function Navbar() {
         </div>
 
         <div className="navbar-end gap-2">
-          <div className="hidden sm:flex lg:gap-4">
-            <button className="btn text-xl btn-ghost btn-sm md:btn-md text-[#4640DE] font-bold lg:px-4 py-2 hover:text-[#0e0b5c]">
-              Login
-            </button>
-            <button className="btn text-xl btn-primary btn-sm font-bold text-white bg-[#4640DE] lg:px-4 py-2 md:btn-md hover:bg-[#0e0b5c]">
-              Sign Up
-            </button>
-          </div>
+          {isAdmin ? (
+            <div className="hidden sm:flex">
+              <Link to="/admin" className="font-bold text-gray-900 font-clash text-2xl px-6 hover:text-[#4640DE] transition-colors">
+                Admin Here!!
+              </Link>
+            </div>
+          ) : (
+            <div className="hidden sm:flex gap-3">
+              <Link to="/login" className="text-xl btn btn-ghost font-semibold text-center text-[#4640DE] hover:text-[#0e0b5c] font-epilogue px-6 border-2">
+                Login
+              </Link>
+              <button className="btn font-semibold text-white text-center justify-items-center bg-[#4640DE] hover:bg-[#0e0b5c] border-none font-epilogue px-6">
+                Sign Up
+              </button>
+            </div>
+          )}
 
           <div className="dropdown dropdown-end border border-1 rounded-full lg:hidden">
             <label tabIndex={0} className="btn btn-ghost">
@@ -78,16 +104,26 @@ function Navbar() {
             >
               {navLinks}
               <div className="divider my-1 sm:hidden"></div>
-              <li className="sm:hidden">
-                <button className="btn px-2 py-2 w-24 font-semibold btn-ghost btn-sm text-xl justify-start text-[#4640DE] hover:text-[#0e0b5c] cursor-pointer">
-                  Login
-                </button>
-              </li>
-              <li className="sm:hidden">
-                <button className="btn px-2 mt-1 font-semibold py-2 w-24 btn-primary btn-sm justify-start text-xl bg-[#4640DE] hover:bg-[#0e0b5c] text-white cursor-pointer">
-                  Sign Up
-                </button>
-              </li>
+              {isAdmin ? (
+                <li className="sm:hidden">
+                  <Link to="/admin" className="font-bold text-gray-900 font-epilogue w-full justify-center">
+                    Admin
+                  </Link>
+                </li>
+              ) : (
+                <>
+                  <li className="sm:hidden">
+                    <Link to="/login" className="btn font-semibold text-[#4640DE] hover:text-[#0e0b5c] font-epilogue w-full justify-center border-2 my-2">
+                      Login
+                    </Link>
+                  </li>
+                  <li className="sm:hidden">
+                    <button className="btn font-semibold text-white bg-[#4640DE] hover:bg-[#0e0b5c] border-none font-epilogue w-full justify-center">
+                      Sign Up
+                    </button>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
         </div>
