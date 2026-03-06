@@ -34,6 +34,26 @@ app.get("/", (req, res) => {
   res.json({ message: "QuickHire API running" });
 });
 
+app.get("/health", async (req, res) => {
+  try {
+    const mongoose = await import('mongoose');
+    const dbState = mongoose.default.connection.readyState;
+    const states = ['disconnected', 'connected', 'connecting', 'disconnecting'];
+    
+    res.json({ 
+      status: "ok",
+      database: states[dbState] || 'unknown',
+      dbState: dbState,
+      mongoUri: process.env.MONGO_URI ? 'set' : 'missing'
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      status: "error",
+      message: error.message 
+    });
+  }
+});
+
 app.use("/api/jobs", jobsRoutes);
 app.use("/api/applications", applicationsRoutes);
 
