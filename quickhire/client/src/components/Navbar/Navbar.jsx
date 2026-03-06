@@ -1,4 +1,4 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Logo from "../../assets/Logo.png";
 
@@ -20,24 +20,33 @@ function Navbar() {
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
+  const handleFindJobsClick = (e) => {
+    e.preventDefault();
+    const searchBar = document.getElementById('search-bar');
+    if (searchBar) {
+      searchBar.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => {
+        const input = searchBar.querySelector('input');
+        if (input) input.focus();
+      }, 500);
+    }
+  };
+
   const navLinks = (
     <>
       <li>
-        <NavLink
-          to="/"
-          className={({ isActive }) =>
-            isActive ? "text-lg font-semibold text-gray-500 font-epilogue" : "text-lg opacity-80 font-epilogue"
-          }
+        <a
+          onClick={handleFindJobsClick}
+          className="text-lg cursor-pointer text-gray-500 font-epilogue hover:text-[#4640DE]"
         >
           Find Jobs
-        </NavLink>
+        </a>
       </li>
       <li>
         <a className="text-lg cursor-pointer text-gray-500 font-epilogue">
           Browse Companies
         </a>
       </li>
-      <li></li>
     </>
   );
 

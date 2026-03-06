@@ -19,7 +19,7 @@ export default function SearchBar({ initial = {}, onSearch }) {
   };
 
   return (
-    <div className="bg-base-100 shadow-lg rounded-md p-4 md:p-5 font-epilogue">
+    <div id="search-bar" className="bg-base-100 shadow-lg rounded-md p-4 md:p-5 font-epilogue">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
         <div className="md:col-span-6 flex justify-center items-center gap-2">
           <i className="fa-brands fa-sistrix text-lg"></i>

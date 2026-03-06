@@ -1,153 +1,159 @@
-# QuickHire
+# QuickHire - Job Board Platform
 
-A job board where people can find jobs and apply, and admins can post/manage listings.
+A modern job board application built with React, Node.js, Express, and MongoDB. QuickHire allows users to browse jobs, apply for positions, and provides an admin dashboard for managing job listings and applications.
 
-## What it does
+## Features
 
-- Browse jobs by category (dev, design, marketing, etc.)
-- Search for specific jobs or companies
-- Apply with your resume link
-- Admin panel to add/remove jobs and see applications
+- Browse featured and latest job listings
+- Search and filter jobs by title, company, category, and location
+- View detailed job descriptions
+- Apply for jobs with resume and cover letter
+- Admin dashboard for managing jobs and applications
+- Responsive design for mobile and desktop
 
-## Stack
+## Tech Stack
 
-**Frontend:** React + Vite, Tailwind CSS, React Router  
-**Backend:** Node.js, Express, MongoDB
+**Frontend:**
+- React 18 with Vite
+- React Router for navigation
+- Tailwind CSS + DaisyUI for styling
+- Axios for API calls
 
-## Local Setup
+**Backend:**
+- Node.js + Express
+- MongoDB with Mongoose
+- CORS enabled for cross-origin requests
 
-### Backend
+## Local Development
 
+### Prerequisites
+- Node.js (v18 or higher)
+- MongoDB Atlas account or local MongoDB instance
+- Git
+
+### Setup Instructions
+
+1. Clone the repository:
 ```bash
-cd server
+git clone https://github.com/mrznur/QSL-QuickHire.git
+cd QSL-QuickHire
+```
+
+2. Install backend dependencies:
+```bash
+cd quickhire/server
 npm install
 ```
 
-Create `.env`:
-```
+3. Create backend `.env` file:
+```bash
 PORT=5000
-MONGO_URI=mongodb://127.0.0.1:27017/quickhire
+MONGO_URI=your_mongodb_connection_string
 ADMIN_KEY=supersecret
 ```
 
-Run it:
+4. Seed the database:
 ```bash
-node src/seed.js
+npm run seed
+```
+
+5. Start the backend server:
+```bash
 npm run dev
 ```
 
-### Frontend
-
+6. Install frontend dependencies (in a new terminal):
 ```bash
-cd client
+cd quickhire/client
 npm install
 ```
 
-Create `.env`:
-```
+7. Create frontend `.env` file:
+```bash
 VITE_API_BASE_URL=http://localhost:5000
 VITE_ADMIN_KEY=supersecret
 ```
 
-Run it:
+8. Start the frontend:
 ```bash
 npm run dev
 ```
 
-## Deploy to Vercel
+The app will be running at `http://localhost:5173`
 
-### 1. Setup MongoDB Atlas
+## Deployment
 
-- Go to mongodb.com/cloud/atlas
-- Create free cluster
-- Database Access → Add user with password
-- Network Access → Add IP `0.0.0.0/0`
-- Get connection string
+### Backend (Vercel)
 
-### 2. Deploy Backend
+1. Create a new Vercel project
+2. Set Root Directory to `quickhire/server`
+3. Add environment variables:
+   - `MONGO_URI` - Your MongoDB connection string
+   - `ADMIN_KEY` - Admin authentication key
+4. Deploy
 
-```bash
-cd server
-vercel
-```
+### Frontend (Vercel)
 
-Or via Vercel dashboard:
-- New Project → Import your repo
-- Root Directory: `server`
-- Framework Preset: Other
-- Build Command: (leave empty)
-- Output Directory: (leave empty)
+1. Create a new Vercel project
+2. Set Root Directory to `quickhire/client`
+3. Add environment variables:
+   - `VITE_API_BASE_URL` - Your backend URL
+   - `VITE_ADMIN_KEY` - Admin authentication key
+4. Deploy
 
-Add environment variables:
-- `MONGO_URI` - your MongoDB Atlas connection string
-- `ADMIN_KEY` - your admin password
-- `PORT` - 10000
+### MongoDB Atlas Setup
 
-Copy your backend URL (e.g., `https://your-backend.vercel.app`)
-
-### 3. Deploy Frontend
-
-```bash
-cd client
-vercel
-```
-
-Or via dashboard:
-- New Project → Import your repo
-- Root Directory: `client`
-- Framework Preset: Vite
-- Build Command: `npm run build`
-- Output Directory: `dist`
-
-Add environment variables:
-- `VITE_API_BASE_URL` - your backend URL from step 2
-- `VITE_ADMIN_KEY` - same as backend
-
-### 4. Seed Database
-
-After backend is deployed, run locally:
-```bash
-cd server
-# Update .env with production MONGO_URI
-node src/seed.js
-```
-
-Done! Your app is live.
+1. Create a cluster on MongoDB Atlas
+2. Go to Network Access
+3. Add IP address `0.0.0.0/0` to allow connections from anywhere
+4. Get your connection string and add it to environment variables
 
 ## Admin Access
 
-Go to `/login` and enter your admin key to manage jobs and view applications.
+- Email: `admin@quickhire.com`
+- Password: `supersecret`
+
+Login at `/login` to access the admin dashboard at `/admin`
 
 ## API Endpoints
 
-**Jobs**
-- `GET /api/jobs` - list jobs
-- `GET /api/jobs/:id` - get one job
-- `POST /api/jobs` - create (admin)
-- `DELETE /api/jobs/:id` - delete (admin)
+### Jobs
+- `GET /api/jobs` - Get all jobs (supports search, category, location filters)
+- `GET /api/jobs/:id` - Get job by ID
+- `POST /api/jobs` - Create job (admin only)
+- `DELETE /api/jobs/:id` - Delete job (admin only)
 
-**Applications**
-- `GET /api/applications` - list all (admin)
-- `POST /api/applications` - submit application
-- `DELETE /api/applications/:id` - delete (admin)
+### Applications
+- `POST /api/applications` - Submit job application
+- `GET /api/applications` - Get all applications (admin only)
+- `DELETE /api/applications/:id` - Delete application (admin only)
 
-## Notes
+## Project Structure
 
-- URL validation simplified for Google Drive links
-- Applications save with try-catch for MongoDB reliability
-- 36 sample jobs in seed script
+```
+quickhire/
+├── client/                 # Frontend React app
+│   ├── src/
+│   │   ├── api/           # API service layer
+│   │   ├── assets/        # Images and static files
+│   │   ├── components/    # Reusable components
+│   │   ├── pages/         # Page components
+│   │   └── utils/         # Utility functions
+│   └── ...
+└── server/                # Backend Express app
+    ├── src/
+    │   ├── config/        # Database configuration
+    │   ├── middleware/    # Express middleware
+    │   ├── models/        # Mongoose models
+    │   ├── routes/        # API routes
+    │   └── app.js         # Express app setup
+    └── ...
+```
 
-## Troubleshooting
+## License
 
-**MongoDB connection fails:**
-- Check IP whitelist includes 0.0.0.0/0
-- Verify password in connection string
-- Add `/quickhire` database name to connection string
+MIT
 
-**CORS errors:**
-- Update backend CORS to include frontend URL
-- Check environment variables are set correctly
+## Author
 
-**Vercel timeout:**
-- Vercel free tier has 10s function timeout
-- Database operations should complete within this
+Developed by [mrznur](https://github.com/mrznur)
