@@ -22,6 +22,7 @@ const connectDB = async () => {
     });
   } catch (error) {
     console.error("DB connection error:", error.message);
+    throw error;
   }
 };
 

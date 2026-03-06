@@ -10,8 +10,17 @@ dotenv.config();
 
 const app = express();
 
-// Connect to MongoDB
-connectDB();
+// Connect to MongoDB (async for serverless)
+let isConnected = false;
+const ensureConnection = async () => {
+  if (!isConnected) {
+    await connectDB();
+    isConnected = true;
+  }
+};
+
+// Initialize connection
+ensureConnection();
 
 app.use(cors({
   origin: '*',
