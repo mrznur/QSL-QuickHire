@@ -8,13 +8,24 @@ const applicationSchema = new mongoose.Schema(
       required: true,
     },
 
-    name: { type: String, required: true },
+    name: {
+      type: String,
+      required: true,
+    },
 
-    email: { type: String, required: true },
+    email: {
+      type: String,
+      required: true,
+    },
 
-    resumeLink: { type: String, required: true },
+    resumeLink: {
+      type: String,
+      required: true,
+    },
 
-    coverNote: { type: String },
+    coverNote: {
+      type: String,
+    },
   },
   {
     timestamps: true,
