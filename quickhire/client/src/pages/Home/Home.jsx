@@ -3,8 +3,14 @@ import Navbar from "../../components/Navbar/Navbar.jsx";
 import SearchBar from "../../components/SearchBar/SearchBar.jsx";
 import JobList from "../../components/JobList/JobList.jsx";
 import Footer from "../../components/Footer/Footer.jsx";
+import CompanyLogos from "../../components/CompanyLogos/CompanyLogos.jsx";
+import CategoryGrid from "../../components/CategoryGrid/CategoryGrid.jsx";
+import Banner from "../../components/Banner/Banner.jsx";
+
 import { getJobs } from "../../api/api.js";
-import LinePicture from "../../assets/Group.png"
+import LinePicture from "../../assets/Group.png";
+import Pattern from "../../assets/Pattern.png";
+import Person from "../../assets/person.png";
 
 const CATEGORY_OPTIONS = [
   "Development",
@@ -26,7 +32,8 @@ export default function Home() {
   const [error, setError] = useState("");
 
   const subtitle = useMemo(
-    () => "Great platform for the job seeker that searching for new career heights and passionate about startups.",
+    () =>
+      "Great platform for the job seeker that searching for new career heights and passionate about startups.",
     [],
   );
 
@@ -53,16 +60,45 @@ export default function Home() {
       <Navbar />
 
       {/* Hero */}
-      <section className="container mx-auto px-4 pt-10 pb-8">
-        <div className="grid lg:grid-cols-2 gap-8 items-center">
-          <div>
-            <h1 className="text-5xl md:text-7xl font-bold mt-2 leading-tight">
-              Discover <br />more than <br /><span className="text-[#26A4FF]">5000+</span>{" "}
+      <section className="container mx-auto px-8 md:px-12 lg:px-16 pt-10 pb-8">
+        <div className="grid lg:grid-cols-2 gap-8 items-center relative">
+          <div className="z-10">
+            <h1 className="text-5xl md:text-7xl font-bold mt-2 leading-tight font-clash">
+              Discover <br />
+              more than <br />
+              <span className="text-[#26A4FF]">5000+</span>{" "}
               <span className="text-[#26A4FF]">Jobs</span>
             </h1>
-            <p><img className="w-56 lg:w-96" src={LinePicture} alt="" /></p>
-            <p className="opacity-80 mt-4 w-56 lg:w-96 text-gray-600">{subtitle}</p>
-            <div className="mt-6">
+            <p>
+              <img className="w-56 lg:w-96 mt-2" src={LinePicture} alt="" />
+            </p>
+            <p className="opacity-80 mt-4 w-56 lg:w-96 text-gray-600">
+              {subtitle}
+            </p>
+          </div>
+
+          <div className="relative">
+            <div className="card bg-base-100">
+              <div className="card-body relative overflow-hidden">
+                <img
+                  src={Pattern}
+                  alt=""
+                  className="w-full h-auto scale-110 lg:scale-125"
+                />
+                <img
+                  src={Person}
+                  alt=""
+                  className="ml-36 mt-8 absolute inset-0 w-full h-full object-contain scale-100 hidden lg:block"
+                  style={{
+                    clipPath:
+                      "polygon(0 0, 100% 0, 100% 75%, 40% 100%, 0 100%)",
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Mobile SearchBar Overlay */}
+            <div className="lg:hidden absolute bottom-24 left-1/2 -translate-x-1/2 z-20 w-full px-4">
               <SearchBar
                 initial={filters}
                 onSearch={(v) => {
@@ -74,62 +110,70 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="hidden lg:block">
-            <div className="card bg-base-100 shadow-xl">
-              <div className="card-body">
-                <h3 className="font-semibold text-lg">Quick tips</h3>
-                <ul className="list-disc ml-5 opacity-80 space-y-2 mt-2">
-                  <li>Use keywords like “Frontend”, “React”, “Intern”.</li>
-                  <li>Filter by category for faster results.</li>
-                  <li>Open a job to apply in 1 minute.</li>
-                </ul>
-              </div>
-            </div>
+          {/* Desktop SearchBar Overlay */}
+          <div className="hidden lg:block lg:absolute lg:bottom-0 lg:left-[45%] lg:-translate-x-1/2 z-20 max-w-4xl w-full px-8">
+            <SearchBar
+              initial={filters}
+              onSearch={(v) => {
+                const next = { ...filters, ...v };
+                setFilters(next);
+                load(next);
+              }}
+            />
+            <p className="text-sm text-gray-600 mt-2 opacity-75">
+              Popular : UI Designer, UX Researcher, Android, Admin
+            </p>
+          </div>
+
+          {/* Mobile Popular Line */}
+          <div className="lg:hidden absolute bottom-0 left-1/2 -translate-x-1/2 z-20 w-full px-4">
+            <span className="text-sm text-gray-500 mt-3 opacity-75">
+              Popular : <br /> UI Designer, UX Researcher, Android, Admin
+            </span>
           </div>
         </div>
+
+        <CompanyLogos />
 
         {/* Category */}
         <div className="mt-10">
           <div className="flex items-center justify-between gap-4">
-            <h2 className="text-2xl font-bold">Explore by category</h2>
-            <select
-              className="select select-bordered max-w-xs"
-              value={filters.category}
-              onChange={(e) =>
-                setFilters((p) => ({ ...p, category: e.target.value }))
-              }
+            <h2 className="text-3xl lg:text-5xl font-bold font-clash">
+              Explore by <span className="text-[#26A4FF]">category</span>
+            </h2>
+            <button
+              className="hidden md:flex text-[#4640DE] font-semibold items-center gap-2 hover:underline"
+              onClick={() => setFilters((p) => ({ ...p, category: "" }))}
             >
-              <option value="">All categories</option>
-              {CATEGORY_OPTIONS.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
+              Show All Jobs <i className="fa-solid fa-arrow-right"></i>
+            </button>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mt-4">
-            {CATEGORY_OPTIONS.map((c) => (
-              <button
-                key={c}
-                className={`btn btn-sm ${filters.category === c ? "btn-primary" : "btn-outline"}`}
-                onClick={() =>
-                  setFilters((p) => ({
-                    ...p,
-                    category: p.category === c ? "" : c,
-                  }))
-                }
-              >
-                {c}
-              </button>
-            ))}
-          </div>
+          <CategoryGrid
+            activeCategory={filters.category}
+            onSelect={(category) =>
+              setFilters((prev) => ({
+                ...prev,
+                category: prev.category === category ? "" : category,
+              }))
+            }
+          />
+
+          <button
+            className="md:hidden mt-4 w-full text-[#4640DE] font-semibold flex items-center justify-center gap-2 hover:underline"
+            onClick={() => setFilters((p) => ({ ...p, category: "" }))}
+          >
+            Show All Jobs <i className="fa-solid fa-arrow-right"></i>
+          </button>
         </div>
 
+      </section>
+      <Banner />
+      <section className="container mx-auto px-8 md:px-12 lg:px-16 pb-8">
         {/* Jobs */}
         <div className="mt-10">
           <div className="flex items-center justify-between gap-4">
-            <h2 className="text-2xl font-bold">Latest jobs open</h2>
+            <h2 className="text-2xl font-bold font-clash">Latest jobs open</h2>
             <button className="btn btn-outline" onClick={() => load(filters)}>
               Refresh
             </button>
