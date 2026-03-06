@@ -25,7 +25,7 @@ const jobSchema = new mongoose.Schema(
       type: String,
       required: [true, "Category is required"],
       enum: {
-        values: ["Development", "Design", "Marketing", "Sales", "Finance", "Operations"],
+        values: ["Development", "Design", "Marketing", "Sales", "Finance", "Operations", "Business"],
         message: "{VALUE} is not a valid category"
       }
     },
