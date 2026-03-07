@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import CategoryCard from "../CategoryCard/CategoryCard.jsx";
-import { getJobs } from "../../api/api.js";
+import { useJobs } from "../../hooks/useJobs.js";
 
 const categories = [
   { title: "Design", icon: "fa-solid fa-pen-ruler" },
@@ -14,30 +14,15 @@ const categories = [
 
 function CategoryGrid() {
   const navigate = useNavigate();
-  const [categoryCounts, setCategoryCounts] = useState({});
-  const [loading, setLoading] = useState(true);
+  const { jobs: allJobs, loading } = useJobs();
 
-  useEffect(() => {
-    async function fetchCategoryCounts() {
-      try {
-        const allJobs = await getJobs();
-        
-        // Count jobs per category
-        const counts = {};
-        categories.forEach(cat => {
-          counts[cat.title] = allJobs.filter(job => job.category === cat.title).length;
-        });
-        
-        setCategoryCounts(counts);
-      } catch (error) {
-        console.error("Failed to fetch category counts:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    
-    fetchCategoryCounts();
-  }, []);
+  const categoryCounts = useMemo(() => {
+    const counts = {};
+    categories.forEach(cat => {
+      counts[cat.title] = allJobs.filter(job => job.category === cat.title).length;
+    });
+    return counts;
+  }, [allJobs]);
 
   const handleCategoryClick = (category) => {
     navigate(`/jobs?category=${encodeURIComponent(category)}`);

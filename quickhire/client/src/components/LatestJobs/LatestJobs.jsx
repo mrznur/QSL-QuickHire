@@ -1,33 +1,18 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import LatestJob from "../LatestJob/LatestJob";
-import { getJobs } from "../../api/api.js";
 import { logoMap } from "../../utils/logoMap.js";
+import { useJobs } from "../../hooks/useJobs.js";
 
 function LatestJobs() {
-  const [jobs, setJobs] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { jobs: allJobs, loading, error } = useJobs();
 
-  useEffect(() => {
-    async function fetchJobs() {
-      try {
-        const data = await getJobs();
-        // Get jobs 8-16 and add logos
-        const jobsWithLogos = data.slice(8, 16).map(job => ({
-          ...job,
-          logo: logoMap[job.company],
-        }));
-        setJobs(jobsWithLogos);
-      } catch (error) {
-        console.error("Failed to fetch jobs:", error);
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchJobs();
-  }, []);
+  const jobs = useMemo(() => {
+    return allJobs.slice(8, 16).map(job => ({
+      ...job,
+      logo: logoMap[job.company],
+    }));
+  }, [allJobs]);
 
   if (loading) {
     return (

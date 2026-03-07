@@ -11,6 +11,7 @@ import LinePicture from "../../assets/Group.png";
 import Pattern from "../../assets/Pattern.png";
 import Person from "../../assets/person.png";
 import FeaturedJobs from "../../components/FeaturedJobs/FeaturedJobs.jsx";
+import { JobsProvider } from "../../context/JobsContext.jsx";
 
 function Home() {
   const subtitle = useMemo(
@@ -22,7 +23,8 @@ function Home() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-base-200 overflow-x-hidden">
+      <JobsProvider>
+        <div className="min-h-screen bg-base-200 overflow-x-hidden">
         {/* Hero */}
         <section className="container mx-auto px-8 md:px-12 lg:px-16 pt-10 pb-8">
           <div className="grid lg:grid-cols-2 gap-8 items-center relative">
@@ -121,6 +123,7 @@ function Home() {
 
         <Footer />
       </div>
+      </JobsProvider>
     </>
   );
 }
