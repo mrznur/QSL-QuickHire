@@ -6,7 +6,7 @@ import Admin from "./pages/Admin/Admin.jsx";
 import Login from "./pages/Login/Login.jsx";
 import NotFound from "./pages/NotFound/NotFound.jsx";
 
-export default function App() {
+function App() {
   return (
     <BrowserRouter>
       <Routes>
@@ -20,3 +20,4 @@ export default function App() {
     </BrowserRouter>
   );
 }
+export default App;

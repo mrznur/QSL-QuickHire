@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export default function NotFound() {
+function NotFound() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-base-200 px-4">
       <div className="card bg-base-100 border max-w-md w-full">
@@ -17,3 +17,4 @@ export default function NotFound() {
     </div>
   );
 }
+export default NotFound;

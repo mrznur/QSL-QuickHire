@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function SearchBar({ initial = {}, onSearch }) {
+function SearchBar({ initial = {}, onSearch }) {
   const [search, setSearch] = useState(initial.search || "");
   const [location, setLocation] = useState(initial.location || "");
   const navigate = useNavigate();
@@ -19,7 +19,10 @@ export default function SearchBar({ initial = {}, onSearch }) {
   };
 
   return (
-    <div id="search-bar" className="bg-base-100 shadow-lg rounded-md p-4 md:p-5 font-epilogue">
+    <div
+      id="search-bar"
+      className="bg-base-100 shadow-lg rounded-md p-4 md:p-5 font-epilogue"
+    >
       <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
         <div className="md:col-span-6 flex justify-center items-center gap-2">
           <i className="fa-brands fa-sistrix text-lg"></i>
@@ -51,8 +54,8 @@ export default function SearchBar({ initial = {}, onSearch }) {
             Search My Job
           </button>
         </div>
-
       </div>
     </div>
   );
 }
+export default SearchBar;

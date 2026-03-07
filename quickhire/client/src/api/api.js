@@ -37,50 +37,96 @@ export async function getJobs({
 }
 
 export async function getJobById(id) {
-  const res = await fetch(`${BASE_URL}/api/jobs/${id}`);
-  if (!res.ok) throw new Error("Failed to fetch job");
-  return res.json();
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+  try {
+    const res = await fetch(`${BASE_URL}/api/jobs/${id}`, {
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+
+    if (!res.ok) throw new Error("Failed to fetch job");
+    return res.json();
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (err.name === "AbortError") {
+      throw new Error("Request timed out");
+    }
+    throw err;
+  }
 }
 
 export async function createJob(jobData) {
-  const res = await fetch(`${BASE_URL}/api/jobs`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-admin-key": import.meta.env.VITE_ADMIN_KEY || "",
-    },
-    body: JSON.stringify(jobData),
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "Failed to create job");
+  try {
+    const res = await fetch(`${BASE_URL}/api/jobs`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-key": import.meta.env.VITE_ADMIN_KEY || "",
+      },
+      body: JSON.stringify(jobData),
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || "Failed to create job");
+    }
+    return res.json();
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (err.name === "AbortError") {
+      throw new Error("Request timed out");
+    }
+    throw err;
   }
-  return res.json();
 }
 
 export async function deleteJob(id) {
-  const res = await fetch(`${BASE_URL}/api/jobs/${id}`, {
-    method: "DELETE",
-    headers: {
-      "x-admin-key": import.meta.env.VITE_ADMIN_KEY || "",
-    },
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "Failed to delete job");
+  try {
+    const res = await fetch(`${BASE_URL}/api/jobs/${id}`, {
+      method: "DELETE",
+      headers: {
+        "x-admin-key": import.meta.env.VITE_ADMIN_KEY || "",
+      },
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || "Failed to delete job");
+    }
+    return res.json();
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (err.name === "AbortError") {
+      throw new Error("Request timed out");
+    }
+    throw err;
   }
-  return res.json();
 }
 
 export async function applyToJob(payload) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
+
   try {
     const res = await fetch(`${BASE_URL}/api/applications`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
+      signal: controller.signal,
     });
+    clearTimeout(timeoutId);
 
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
@@ -88,6 +134,10 @@ export async function applyToJob(payload) {
     }
     return res.json();
   } catch (err) {
+    clearTimeout(timeoutId);
+    if (err.name === "AbortError") {
+      throw new Error("Request timed out — please try again");
+    }
     throw err;
   }
 }
@@ -120,16 +170,29 @@ export async function getApplications() {
 }
 
 export async function deleteApplication(id) {
-  const res = await fetch(`${BASE_URL}/api/applications/${id}`, {
-    method: "DELETE",
-    headers: {
-      "x-admin-key": import.meta.env.VITE_ADMIN_KEY || "",
-    },
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "Failed to delete application");
+  try {
+    const res = await fetch(`${BASE_URL}/api/applications/${id}`, {
+      method: "DELETE",
+      headers: {
+        "x-admin-key": import.meta.env.VITE_ADMIN_KEY || "",
+      },
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || "Failed to delete application");
+    }
+    return res.json();
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (err.name === "AbortError") {
+      throw new Error("Request timed out");
+    }
+    throw err;
   }
-  return res.json();
 }
