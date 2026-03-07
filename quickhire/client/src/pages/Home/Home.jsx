@@ -28,7 +28,7 @@ function Home() {
         {/* Hero */}
         <section className="container mx-auto px-8 md:px-12 lg:px-16 pt-10 pb-8">
           <div className="grid lg:grid-cols-2 gap-8 items-center relative">
-            <div className="z-10">
+            <div className="z-10 animate-fadeInLeft">
               <h1 className="text-5xl md:text-7xl font-bold mt-2 leading-tight font-clash">
                 Discover <br />
                 more than <br />
@@ -47,7 +47,7 @@ function Home() {
               </p>
             </div>
 
-            <div className="relative">
+            <div className="relative animate-fadeInRight delay-200">
               <div className="card bg-base-100">
                 <div className="card-body relative overflow-hidden">
                   <img
@@ -90,7 +90,7 @@ function Home() {
           </div>
 
           {/* Category */}
-          <div className="mt-10">
+          <div className="mt-10 animate-fadeInUp delay-300">
             <div className="flex items-center justify-between gap-4">
               <h2 className="text-3xl lg:text-5xl font-bold font-clash">
                 Explore by <span className="text-[#26A4FF]">category</span>

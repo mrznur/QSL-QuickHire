@@ -49,8 +49,8 @@ function FeaturedJobs() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-        {jobs.map((job) => (
-          <FeaturedJob key={job._id} job={job} />
+        {jobs.map((job, index) => (
+          <FeaturedJob key={job._id} job={job} delay={100 * (index + 1)} />
         ))}
       </div>
 

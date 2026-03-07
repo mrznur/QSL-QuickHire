@@ -12,9 +12,9 @@ function getCategoryColor(category) {
   return colors[category] || 'bg-[#4640DE] bg-opacity-10 text-[#4640DE]';
 }
 
-function FeaturedJob({ job }) {
+function FeaturedJob({ job, delay = 0 }) {
   return (
-    <Link to={`/jobs/${job._id}`} className="bg-white border border-[#E5E7EB] rounded-lg p-5 min-h-[185px] flex flex-col justify-between hover:shadow-md transition font-epilogue">
+    <Link to={`/jobs/${job._id}`} className={`bg-white border border-[#E5E7EB] rounded-lg p-5 min-h-[185px] flex flex-col justify-between hover:shadow-md transition font-epilogue animate-fadeInUp delay-${delay}`}>
       <div>
         <div className="flex items-start justify-between gap-3">
           <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-gray-50 overflow-hidden border border-gray-200">

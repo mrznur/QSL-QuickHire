@@ -5,7 +5,7 @@ function Banner() {
   return (
     <>
       {/* Desktop Banner */}
-      <section className="hidden md:block container mx-auto px-8 md:px-12 lg:px-16 my-10">
+      <section className="hidden md:block container mx-auto px-8 md:px-12 lg:px-16 my-10 animate-fadeIn">
         <div className="relative w-full overflow-hidden rounded-lg">
           <img src={Rectangle} alt="" className="w-full h-auto" />
 

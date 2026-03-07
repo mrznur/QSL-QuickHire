@@ -30,13 +30,14 @@ function CategoryGrid() {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
-      {categories.map((cat) => (
+      {categories.map((cat, index) => (
         <CategoryCard
           key={cat.title}
           title={cat.title}
           jobs={loading ? "..." : (categoryCounts[cat.title] || 0)}
           icon={cat.icon}
           onClick={() => handleCategoryClick(cat.title)}
+          delay={100 * (index + 1)}
         />
       ))}
     </div>

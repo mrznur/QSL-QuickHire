@@ -49,8 +49,8 @@ function LatestJobs() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {jobs.map((job) => (
-            <LatestJob key={job._id} job={job} />
+          {jobs.map((job, index) => (
+            <LatestJob key={job._id} job={job} delay={100 * (index + 1)} />
           ))}
         </div>
 
