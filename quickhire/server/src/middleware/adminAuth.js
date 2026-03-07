@@ -1,4 +1,4 @@
-export default function adminAuth(req, res, next) {
+function adminAuth(req, res, next) {
   const key = req.header("x-admin-key");
 
   if (!key || key !== process.env.ADMIN_KEY) {
@@ -9,3 +9,4 @@ export default function adminAuth(req, res, next) {
 
   next();
 }
+export default adminAuth;

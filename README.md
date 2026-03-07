@@ -92,6 +92,11 @@ The app will be running at `http://localhost:5173`
    - `ADMIN_KEY` - Admin authentication key
 4. Deploy
 
+**Note on Cold Starts:** Vercel serverless functions sleep after inactivity. The first request after sleep takes 3-10 seconds (cold start). Subsequent requests are fast. To keep the backend warm, you can:
+- Use a service like [Cron-job.org](https://cron-job.org) to ping your backend every 5 minutes
+- Ping URL: `https://your-backend.vercel.app/health`
+- Or upgrade to Vercel Pro for faster cold starts
+
 ### Frontend (Vercel)
 
 1. Create a new Vercel project
