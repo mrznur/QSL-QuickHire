@@ -8,16 +8,11 @@ function FeaturedJobs() {
   const { jobs: allJobs, loading, error } = useJobs();
 
   const jobs = useMemo(() => {
-    const featuredJobs = allJobs.slice(0, 8).map(job => {
-      const logo = logoMap[job.company];
-      console.log(`Featured: ${job.company} - Logo:`, logo ? 'Found' : 'Missing');
-      return {
-        ...job,
-        logo: logo,
-        type: job.jobType,
-      };
-    });
-    return featuredJobs;
+    return allJobs.slice(0, 8).map(job => ({
+      ...job,
+      logo: logoMap[job.company],
+      type: job.jobType,
+    }));
   }, [allJobs]);
 
   if (loading) {

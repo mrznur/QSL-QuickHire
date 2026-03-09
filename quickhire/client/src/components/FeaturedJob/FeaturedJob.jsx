@@ -13,8 +13,6 @@ function getCategoryColor(category) {
 }
 
 function FeaturedJob({ job, delay = 0 }) {
-  console.log('FeaturedJob rendering:', job.company, 'Logo:', job.logo);
-  
   return (
     <Link to={`/jobs/${job._id}`} className={`bg-white border border-[#E5E7EB] rounded-lg p-5 min-h-[185px] flex flex-col justify-between hover:shadow-md transition font-epilogue animate-fadeInUp delay-${delay}`}>
       <div>
@@ -25,7 +23,6 @@ function FeaturedJob({ job, delay = 0 }) {
                 src={job.logo}
                 alt={job.company}
                 className="w-[75%] h-[75%]"
-                onError={(e) => console.error('Image failed to load:', job.company, job.logo)}
               />
             ) : (
               <span className="text-lg font-semibold text-gray-700">

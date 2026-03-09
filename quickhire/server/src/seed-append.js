@@ -4,8 +4,8 @@ import Job from "./models/Job.js";
 
 dotenv.config();
 
-// Helper function to generate job data
-function generateJobs() {
+// Generate 200 additional jobs (without clearing existing)
+function generateAdditionalJobs() {
   const titles = {
     Development: ["Senior Frontend Developer", "Backend Engineer", "Full Stack Developer", "DevOps Engineer", "Mobile Developer", "Software Architect", "Cloud Engineer", "Data Engineer", "QA Engineer", "Security Engineer"],
     Design: ["UI/UX Designer", "Product Designer", "Graphic Designer", "Visual Designer", "Brand Designer", "Motion Designer", "Interaction Designer", "Design Lead", "Creative Director", "Art Director"],
@@ -17,11 +17,11 @@ function generateJobs() {
   };
 
   const companies = [
-    "Google", "Microsoft", "Amazon", "Apple", "Meta", "Netflix", "Tesla", "Uber", "Airbnb", "Spotify",
-    "Adobe", "Salesforce", "Oracle", "IBM", "Intel", "Cisco", "PayPal", "Square", "Stripe", "Shopify",
-    "Zoom", "Slack", "Atlassian", "GitHub", "GitLab", "Docker", "MongoDB", "Redis", "Elastic", "Databricks",
-    "Snowflake", "Twilio", "SendGrid", "Mailchimp", "HubSpot", "Zendesk", "Intercom", "Figma", "Notion", "Asana",
-    "Trello", "Monday.com", "ClickUp", "Airtable", "Zapier", "IFTTT", "Postman", "Insomnia", "Vercel", "Netlify"
+    "Atlassian", "Slack", "Docker", "MongoDB", "Redis", "Elastic", "Databricks", "Snowflake", "Twilio", "SendGrid",
+    "Mailchimp", "HubSpot", "Zendesk", "Intercom", "Figma", "Notion", "Asana", "Trello", "Monday.com", "ClickUp",
+    "Airtable", "Zapier", "Postman", "Vercel", "Netlify", "Cloudflare", "DigitalOcean", "Linode", "Heroku", "Railway",
+    "Supabase", "PlanetScale", "Neon", "Render", "Fly.io", "Deno", "Bun", "Vite", "Turbo", "Nx",
+    "Prisma", "Drizzle", "tRPC", "Next.js", "Remix", "Astro", "SvelteKit", "Nuxt", "Qwik", "Solid"
   ];
 
   const locations = [
@@ -37,7 +37,6 @@ function generateJobs() {
 
   const jobs = [];
 
-  // Generate 200 jobs
   for (let i = 0; i < 200; i++) {
     const categories = Object.keys(titles);
     const category = categories[Math.floor(Math.random() * categories.length)];
@@ -53,15 +52,7 @@ function generateJobs() {
 
     const description = `${company} is seeking a talented ${title} to join our ${category} team. You'll work on exciting projects, collaborate with cross-functional teams, and help drive innovation. We offer competitive compensation, excellent benefits, and opportunities for growth.`;
 
-    jobs.push({
-      title,
-      company,
-      location,
-      category,
-      jobType,
-      salaryRange,
-      description
-    });
+    jobs.push({ title, company, location, category, jobType, salaryRange, description });
   }
 
   return jobs;
@@ -72,17 +63,15 @@ async function seedDatabase() {
     await mongoose.connect(process.env.MONGO_URI);
     console.log("Connected to MongoDB");
 
-    // Clear existing jobs
-    await Job.deleteMany({});
-    console.log("Cleared existing jobs");
+    const existingCount = await Job.countDocuments();
+    console.log(`Current jobs in database: ${existingCount}`);
 
-    // Generate 200 new jobs
-    const generatedJobs = generateJobs();
+    const additionalJobs = generateAdditionalJobs();
+    await Job.insertMany(additionalJobs);
 
-    // Insert all jobs
-    await Job.insertMany(generatedJobs);
-
-    console.log(`Inserted ${generatedJobs.length} jobs`);
+    const newCount = await Job.countDocuments();
+    console.log(`Added ${additionalJobs.length} new jobs`);
+    console.log(`Total jobs now: ${newCount}`);
     console.log("Database seeded successfully!");
 
     await mongoose.connection.close();

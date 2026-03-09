@@ -8,15 +8,10 @@ function LatestJobs() {
   const { jobs: allJobs, loading, error } = useJobs();
 
   const jobs = useMemo(() => {
-    const latestJobs = allJobs.slice(8, 16).map(job => {
-      const logo = logoMap[job.company];
-      console.log(`Latest: ${job.company} - Logo:`, logo ? 'Found' : 'Missing');
-      return {
-        ...job,
-        logo: logo,
-      };
-    });
-    return latestJobs;
+    return allJobs.slice(8, 16).map(job => ({
+      ...job,
+      logo: logoMap[job.company],
+    }));
   }, [allJobs]);
 
   if (loading) {
