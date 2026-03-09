@@ -22,27 +22,91 @@ function JobListings() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const [category, setCategory] = useState(searchParams.get("category") || "");
   const [location, setLocation] = useState(searchParams.get("location") || "");
 
-  async function fetchJobs() {
-    setLoading(true);
-    setErr("");
-    try {
-      const data = await getJobs({ search, category, location });
-      setJobs(data);
-    } catch (e) {
-      setErr(e.message || "Failed to load jobs");
-    } finally {
-      setLoading(false);
-    }
-  }
+  // Items per page based on screen size
+  const itemsPerPage = isMobile ? 20 : 30;
+
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
-    fetchJobs();
+    async function loadJobs() {
+      setLoading(true);
+      setErr("");
+      try {
+        const data = await getJobs({ search, category, location });
+        setJobs(data);
+        setCurrentPage(1);
+      } catch (e) {
+        setErr(e.message || "Failed to load jobs");
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadJobs();
   }, [search, category, location]);
+
+  // Pagination calculations
+  const totalPages = Math.ceil(jobs.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentJobs = jobs.slice(startIndex, endIndex);
+
+  // Generate page numbers to display
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisible = isMobile ? 3 : 5;
+    
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= maxVisible; i++) {
+          pages.push(i);
+        }
+        pages.push('...');
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1);
+        pages.push('...');
+        for (let i = totalPages - maxVisible + 1; i <= totalPages; i++) {
+          pages.push(i);
+        }
+      } else {
+        pages.push(1);
+        pages.push('...');
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+          pages.push(i);
+        }
+        pages.push('...');
+        pages.push(totalPages);
+      }
+    }
+    return pages;
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    scrollToTop();
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -118,11 +182,11 @@ function JobListings() {
         ) : (
           <div className="mt-8">
             <p className="text-base text-gray-600 mb-6 font-epilogue">
-              {jobs.length} job{jobs.length !== 1 ? "s" : ""} found
+              Showing {startIndex + 1}-{Math.min(endIndex, jobs.length)} of {jobs.length} job{jobs.length !== 1 ? "s" : ""}
             </p>
 
             <div className="grid grid-cols-1 gap-4">
-              {jobs.map((job) => {
+              {currentJobs.map((job) => {
                 const companyLogo = logoMap[job.company];
 
                 return (
@@ -200,6 +264,45 @@ function JobListings() {
                 );
               })}
             </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 mt-10">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="btn btn-sm btn-ghost font-epilogue disabled:opacity-30"
+                >
+                  <i className="fas fa-chevron-left"></i>
+                </button>
+
+                {getPageNumbers().map((page, index) => (
+                  page === '...' ? (
+                    <span key={`ellipsis-${index}`} className="px-2 text-gray-400">...</span>
+                  ) : (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`btn btn-sm font-epilogue ${
+                        currentPage === page
+                          ? 'bg-[#4640DE] text-white hover:bg-[#3730a3]'
+                          : 'btn-ghost'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  )
+                ))}
+
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="btn btn-sm btn-ghost font-epilogue disabled:opacity-30"
+                >
+                  <i className="fas fa-chevron-right"></i>
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
