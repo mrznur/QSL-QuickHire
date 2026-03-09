@@ -32,7 +32,7 @@ function Navbar() {
       </li>
       <li>
         <Link
-          to="/jobs"
+          to="/companies"
           className="text-lg cursor-pointer text-gray-500 font-epilogue hover:text-[#4640DE]"
         >
           Browse Companies
