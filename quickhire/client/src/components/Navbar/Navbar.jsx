@@ -20,6 +20,10 @@ function Navbar() {
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
+  const handleLogoClick = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const navLinks = (
     <>
       <li>
@@ -45,11 +49,12 @@ function Navbar() {
     <div className="navbar bg-base-100 sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-8 md:px-12 lg:px-16 flex justify-between items-center">
         <div className="navbar-start">
-          <Link to="/">
+          <Link to="/" onClick={handleLogoClick}>
             <img src={Logo} alt="" />
           </Link>
           <Link
             to="/"
+            onClick={handleLogoClick}
             className="btn btn-ghost text-xl lg:text-3xl font-bold gap-0 font-redhat"
           >
             QuickHire
