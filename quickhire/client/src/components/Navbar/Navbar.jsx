@@ -20,46 +20,23 @@ function Navbar() {
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
-  const handleFindJobsClick = (e) => {
-    e.preventDefault();
-    // If on homepage, scroll to search bar
-    if (window.location.pathname === '/') {
-      const searchBar = document.getElementById('search-bar');
-      if (searchBar) {
-        searchBar.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        setTimeout(() => {
-          const input = searchBar.querySelector('input');
-          if (input) input.focus();
-        }, 500);
-      }
-    } else {
-      // If on other pages, navigate to jobs page
-      window.location.href = '/jobs';
-    }
-  };
-
-  const handleBrowseCompaniesClick = (e) => {
-    e.preventDefault();
-    window.location.href = '/jobs';
-  };
-
   const navLinks = (
     <>
       <li>
-        <a
-          onClick={handleFindJobsClick}
+        <Link
+          to="/jobs"
           className="text-lg cursor-pointer text-gray-500 font-epilogue hover:text-[#4640DE]"
         >
           Find Jobs
-        </a>
+        </Link>
       </li>
       <li>
-        <a
-          onClick={handleBrowseCompaniesClick}
+        <Link
+          to="/jobs"
           className="text-lg cursor-pointer text-gray-500 font-epilogue hover:text-[#4640DE]"
         >
           Browse Companies
-        </a>
+        </Link>
       </li>
     </>
   );
