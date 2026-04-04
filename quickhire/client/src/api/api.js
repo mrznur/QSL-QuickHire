@@ -130,7 +130,10 @@ export async function applyToJob(payload) {
 
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || "Failed to apply");
+      const errorMsg = err.details 
+        ? `${err.message}: ${err.details.map(d => d.message).join(', ')}`
+        : err.message || "Failed to apply";
+      throw new Error(errorMsg);
     }
     return res.json();
   } catch (err) {

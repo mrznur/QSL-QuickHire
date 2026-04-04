@@ -1,6 +1,10 @@
 import Logo from "../../assets/Logo.png";
+import { Link } from "react-router-dom";
 
 function Footer() {
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
   return (
     <footer className="bg-[#1D2140] text-white pt-16 pb-8 font-epilogue">
       <div className="container mx-auto px-4">
@@ -13,7 +17,7 @@ function Footer() {
             </div>
 
             <p className="mt-6 text-[17px] leading-9 text-[#B8BDD3] max-w-[320px] font-epilogue">
-              Great platform for the job seeker that passionate about startups.
+              Great platform for the job seekers who are passionate about startups.
               Find your dream job easier.
             </p>
           </div>
@@ -24,11 +28,11 @@ function Footer() {
             <div>
               <h3 className="text-2xl font-semibold mb-6 ">About</h3>
               <ul className="space-y-5 text-[#B8BDD3] text-lg">
-                <li>Companies</li>
-                <li>Pricing</li>
-                <li>Terms</li>
-                <li>Advice</li>
-                <li>Privacy Policy</li>
+                <li><Link to="/" onClick={scrollToTop} className="hover:text-white transition-colors cursor-pointer">Companies</Link></li>
+                <li><Link to="/" onClick={scrollToTop} className="hover:text-white transition-colors cursor-pointer">Pricing</Link></li>
+                <li><Link to="/" onClick={scrollToTop} className="hover:text-white transition-colors cursor-pointer">Terms</Link></li>
+                <li><Link to="/" onClick={scrollToTop} className="hover:text-white transition-colors cursor-pointer">Advice</Link></li>
+                <li><Link to="/" onClick={scrollToTop} className="hover:text-white transition-colors cursor-pointer">Privacy Policy</Link></li>
               </ul>
             </div>
 
@@ -36,10 +40,10 @@ function Footer() {
             <div>
               <h3 className="text-2xl font-semibold mb-6">Resources</h3>
               <ul className="space-y-5 text-[#B8BDD3] text-lg">
-                <li>Help Docs</li>
-                <li>Guide</li>
-                <li>Updates</li>
-                <li>Contact Us</li>
+                <li><Link to="/" onClick={scrollToTop} className="hover:text-white transition-colors cursor-pointer">Help Docs</Link></li>
+                <li><Link to="/" onClick={scrollToTop} className="hover:text-white transition-colors cursor-pointer">Guide</Link></li>
+                <li><Link to="/" onClick={scrollToTop} className="hover:text-white transition-colors cursor-pointer">Updates</Link></li>
+                <li><Link to="/" onClick={scrollToTop} className="hover:text-white transition-colors cursor-pointer">Contact Us</Link></li>
               </ul>
             </div>
           </div>
@@ -74,21 +78,31 @@ function Footer() {
           </p>
 
           <div className="flex items-center gap-4">
-            <button className="w-10 h-10 rounded-full bg-[#2A2F4F] flex items-center justify-center text-white hover:bg-[#635BFF] transition-colors">
-              <i class="fa-brands fa-facebook-f"></i>
-            </button>
-            <button className="w-10 h-10 rounded-full bg-[#2A2F4F] flex items-center justify-center text-white hover:bg-[#635BFF] transition-colors">
-              <i class="fa-brands fa-instagram"></i>
-            </button>
-            <button className="w-10 h-10 rounded-full bg-[#2A2F4F] flex items-center justify-center text-white hover:bg-[#635BFF] transition-colors">
-              <i class="fa-brands fa-dribbble"></i>
-            </button>
-            <button className="w-10 h-10 rounded-full bg-[#2A2F4F] flex items-center justify-center text-white hover:bg-[#635BFF] transition-colors">
-              <i class="fa-brands fa-linkedin-in"></i>
-            </button>
-            <button className="w-10 h-10 rounded-full bg-[#2A2F4F] flex items-center justify-center text-white hover:bg-[#635BFF] transition-colors">
-              <i class="fa-brands fa-twitter"></i>
-            </button>
+            <Link to="/" onClick={scrollToTop}>
+              <button className="w-10 h-10 rounded-full bg-[#2A2F4F] flex items-center justify-center text-white hover:bg-[#635BFF] transition-colors">
+                <i className="fa-brands fa-facebook-f"></i>
+              </button>
+            </Link>
+            <Link to="/" onClick={scrollToTop}>
+              <button className="w-10 h-10 rounded-full bg-[#2A2F4F] flex items-center justify-center text-white hover:bg-[#635BFF] transition-colors">
+                <i className="fa-brands fa-instagram"></i>
+              </button>
+            </Link>
+            <Link to="/" onClick={scrollToTop}>
+              <button className="w-10 h-10 rounded-full bg-[#2A2F4F] flex items-center justify-center text-white hover:bg-[#635BFF] transition-colors">
+                <i className="fa-brands fa-dribbble"></i>
+              </button>
+            </Link>
+            <Link to="/" onClick={scrollToTop}>
+              <button className="w-10 h-10 rounded-full bg-[#2A2F4F] flex items-center justify-center text-white hover:bg-[#635BFF] transition-colors">
+                <i className="fa-brands fa-linkedin-in"></i>
+              </button>
+            </Link>
+            <Link to="/" onClick={scrollToTop}>
+              <button className="w-10 h-10 rounded-full bg-[#2A2F4F] flex items-center justify-center text-white hover:bg-[#635BFF] transition-colors">
+                <i className="fa-brands fa-twitter"></i>
+              </button>
+            </Link>
           </div>
         </div>
       </div>

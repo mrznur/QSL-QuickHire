@@ -46,6 +46,7 @@ function JobDetails() {
       setSuccessMsg("Application submitted successfully!");
       setForm({ name: "", email: "", resumeLink: "", coverNote: "" });
     } catch (e2) {
+      console.error("Application error:", e2);
       setErr(e2.message || "Failed to apply");
     } finally {
       setSubmitting(false);

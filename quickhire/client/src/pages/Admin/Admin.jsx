@@ -15,6 +15,9 @@ function Admin() {
   const [loading, setLoading] = useState(true);
   const [msg, setMsg] = useState("");
   const [err, setErr] = useState("");
+  
+  // Modal states
+  const [deleteModal, setDeleteModal] = useState({ show: false, type: '', id: '', name: '' });
 
   const [form, setForm] = useState({
     title: "",
@@ -108,30 +111,42 @@ function Admin() {
   }
 
   async function remove(id) {
-    if (!confirm("Are you sure you want to delete this job?")) return;
-    
     setMsg("");
     setErr("");
     try {
       await deleteJob(id);
       setMsg("Job deleted successfully!");
+      setDeleteModal({ show: false, type: '', id: '', name: '' });
       refresh();
     } catch (e) {
       setErr(e.message || "Failed to delete job (check admin key)");
+      setDeleteModal({ show: false, type: '', id: '', name: '' });
     }
   }
 
   async function removeApplication(id) {
-    if (!confirm("Are you sure you want to delete this application?")) return;
-    
     setMsg("");
     setErr("");
     try {
       await deleteApplication(id);
       setMsg("Application deleted successfully!");
+      setDeleteModal({ show: false, type: '', id: '', name: '' });
       refresh();
     } catch (e) {
       setErr(e.message || "Failed to delete application");
+      setDeleteModal({ show: false, type: '', id: '', name: '' });
+    }
+  }
+  
+  function openDeleteModal(type, id, name) {
+    setDeleteModal({ show: true, type, id, name });
+  }
+  
+  function confirmDelete() {
+    if (deleteModal.type === 'job') {
+      remove(deleteModal.id);
+    } else if (deleteModal.type === 'application') {
+      removeApplication(deleteModal.id);
     }
   }
 
@@ -246,10 +261,46 @@ function Admin() {
         </div>
 
         {msg && (
-          <div className="alert alert-success mt-6 font-epilogue">{msg}</div>
+          <div className="modal modal-open">
+            <div className="modal-box">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+                  <i className="fas fa-check text-white text-2xl"></i>
+                </div>
+                <h3 className="font-bold text-xl font-clash text-green-800">Success!</h3>
+              </div>
+              <p className="py-4 font-epilogue text-gray-700">{msg}</p>
+              <div className="modal-action">
+                <button 
+                  className="btn bg-green-500 hover:bg-green-600 text-white font-epilogue border-none"
+                  onClick={() => setMsg("")}
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          </div>
         )}
         {err && (
-          <div className="alert alert-error mt-6 font-epilogue">{err}</div>
+          <div className="modal modal-open">
+            <div className="modal-box">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center">
+                  <i className="fas fa-exclamation-circle text-white text-2xl"></i>
+                </div>
+                <h3 className="font-bold text-xl font-clash text-red-800">Error</h3>
+              </div>
+              <p className="py-4 font-epilogue text-gray-700">{err}</p>
+              <div className="modal-action">
+                <button 
+                  className="btn btn-error font-epilogue"
+                  onClick={() => setErr("")}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
         )}
 
         {activeTab === "jobs" ? (
@@ -450,7 +501,7 @@ function Admin() {
 
                         <button
                           className="btn btn-error btn-sm font-epilogue"
-                          onClick={() => remove(j._id)}
+                          onClick={() => openDeleteModal('job', j._id, j.title)}
                         >
                           <i className="fas fa-trash"></i>
                         </button>
@@ -506,7 +557,7 @@ function Admin() {
                         </span>
                         <button
                           className="btn btn-error btn-sm font-epilogue"
-                          onClick={() => removeApplication(app._id)}
+                          onClick={() => openDeleteModal('application', app._id, app.name)}
                         >
                           <i className="fas fa-trash"></i>
                         </button>
@@ -558,6 +609,39 @@ function Admin() {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteModal.show && (
+        <div className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg font-clash mb-4">
+              <i className="fas fa-exclamation-triangle text-error mr-2"></i>
+              Confirm Delete
+            </h3>
+            <p className="py-4 font-epilogue">
+              Are you sure you want to delete {deleteModal.type === 'job' ? 'this job' : 'this application'}?
+            </p>
+            <p className="font-semibold font-epilogue text-gray-700">
+              {deleteModal.name}
+            </p>
+            <div className="modal-action">
+              <button 
+                className="btn btn-ghost font-epilogue"
+                onClick={() => setDeleteModal({ show: false, type: '', id: '', name: '' })}
+              >
+                Cancel
+              </button>
+              <button 
+                className="btn btn-error font-epilogue"
+                onClick={confirmDelete}
+              >
+                <i className="fas fa-trash mr-2"></i>
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>

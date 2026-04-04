@@ -1,11 +1,5 @@
 import mongoose from "mongoose";
 
-// Email validation regex
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-// URL validation regex (fixed ReDoS vulnerability)
-const urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([/?#][^\s]*)?$/i;
-
 const applicationSchema = new mongoose.Schema(
   {
     jobId: {
@@ -28,7 +22,7 @@ const applicationSchema = new mongoose.Schema(
       lowercase: true,
       validate: {
         validator: function(v) {
-          return emailRegex.test(v);
+          return v && v.includes('@');
         },
         message: props => `${props.value} is not a valid email address`
       }
@@ -40,9 +34,9 @@ const applicationSchema = new mongoose.Schema(
       trim: true,
       validate: {
         validator: function(v) {
-          return urlRegex.test(v);
+          return v && (v.startsWith('http://') || v.startsWith('https://'));
         },
-        message: props => `${props.value} is not a valid URL`
+        message: props => `${props.value} is not a valid URL (must start with http:// or https://)`
       }
     },
 
