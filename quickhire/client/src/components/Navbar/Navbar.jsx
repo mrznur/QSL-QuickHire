@@ -1,24 +1,16 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Logo from "../../assets/Logo.png";
 
 function Navbar() {
   const [isAdmin, setIsAdmin] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
-    // Check if admin is logged in
-    const adminKey = sessionStorage.getItem("adminKey");
-    setIsAdmin(!!adminKey);
-
-    // Listen for storage changes (login/logout)
-    const handleStorageChange = () => {
-      const key = sessionStorage.getItem("adminKey");
-      setIsAdmin(!!key);
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
+    // Re-check on every route change so login/logout reflects immediately
+    const token = sessionStorage.getItem("adminToken");
+    setIsAdmin(!!token);
+  }, [location]);
 
   const handleLogoClick = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -59,9 +51,11 @@ function Navbar() {
           >
             QuickHire
           </Link>
-          <div className="hidden lg:flex ml-4">
-            <ul className="menu menu-horizontal px-1 gap-2">{navLinks}</ul>
-          </div>
+          {!isAdmin && (
+            <div className="hidden lg:flex ml-4">
+              <ul className="menu menu-horizontal px-1 gap-2">{navLinks}</ul>
+            </div>
+          )}
         </div>
 
         <div className="navbar-center hidden">
@@ -107,7 +101,7 @@ function Navbar() {
               tabIndex={0}
               className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
             >
-              {navLinks}
+              {!isAdmin && navLinks}
               <div className="divider my-1 sm:hidden"></div>
               {isAdmin ? (
                 <li className="sm:hidden">

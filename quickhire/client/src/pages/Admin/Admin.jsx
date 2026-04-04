@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar.jsx";
 import Footer from "../../components/Footer/Footer.jsx";
-import { createJob, deleteJob, getJobs, getApplications, deleteApplication } from "../../api/api.js";
+import { createJob, deleteJob, getJobs, getApplications, deleteApplication, adminLogin } from "../../api/api.js";
 import { logoMap } from "../../utils/logoMap.js";
 
 function Admin() {
+  const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [adminKey, setAdminKey] = useState("");
   const [loginError, setLoginError] = useState("");
@@ -29,13 +31,10 @@ function Admin() {
     description: "",
   });
 
-  // Check if already logged in
+  // Check if already logged in (token still in sessionStorage)
   useEffect(() => {
-    const storedKey = sessionStorage.getItem("adminKey");
-    if (storedKey) {
-      setAdminKey(storedKey);
-      setIsAuthenticated(true);
-    }
+    const token = sessionStorage.getItem("adminToken");
+    if (token) setIsAuthenticated(true);
   }, []);
 
   async function refresh() {
@@ -66,25 +65,25 @@ function Admin() {
     }
   }, [isAuthenticated]);
 
-  function handleLogin(e) {
+  async function handleLogin(e) {
     e.preventDefault();
     setLoginError("");
-
-    // Simple validation - check if key matches the one in .env
-    const expectedKey = import.meta.env.VITE_ADMIN_KEY;
-    
-    if (adminKey === expectedKey) {
-      sessionStorage.setItem("adminKey", adminKey);
+    try {
+      // Sends key to server → server validates → returns JWT → stored in sessionStorage
+      // The raw key is never stored in the browser
+      await adminLogin(adminKey);
+      setAdminKey(""); // clear the input immediately
       setIsAuthenticated(true);
-    } else {
-      setLoginError("Invalid admin key. Please try again.");
+    } catch (err) {
+      setLoginError(err.message || "Invalid admin key. Please try again.");
     }
   }
 
   function handleLogout() {
-    sessionStorage.removeItem("adminKey");
+    sessionStorage.removeItem("adminToken");
     setIsAuthenticated(false);
     setAdminKey("");
+    navigate("/login");
   }
 
   async function submit(e) {

@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 
 import jobsRoutes from "./routes/jobs.js";
 import applicationsRoutes from "./routes/applications.js";
+import authRoutes from "./routes/auth.js";
 
 dotenv.config();
 
@@ -38,7 +39,7 @@ async function connectToDatabase() {
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'x-admin-key'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: false
 }));
 app.use(express.json());
@@ -82,6 +83,7 @@ app.get("/health", async (_req, res) => {
 
 app.use("/api/jobs", jobsRoutes);
 app.use("/api/applications", applicationsRoutes);
+app.use("/api/auth", authRoutes);
 
 const PORT = process.env.PORT || 5000;
 

@@ -9,6 +9,31 @@ function buildQuery(params = {}) {
   return s ? `?${s}` : "";
 }
 
+// Returns the stored JWT token from sessionStorage
+function getToken() {
+  return sessionStorage.getItem("adminToken") || "";
+}
+
+// POST /api/auth/login — sends key to server, gets back a JWT
+// The raw key is never stored in the browser after this call
+export async function adminLogin(key) {
+  const res = await fetch(`${BASE_URL}/api/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ key }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || "Invalid admin key");
+  }
+
+  const { token } = await res.json();
+  // Store the JWT — NOT the raw key
+  sessionStorage.setItem("adminToken", token);
+  return token;
+}
+
 export async function getJobs({
   search = "",
   category = "",
@@ -66,7 +91,7 @@ export async function createJob(jobData) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-admin-key": import.meta.env.VITE_ADMIN_KEY || "",
+        "Authorization": `Bearer ${getToken()}`,
       },
       body: JSON.stringify(jobData),
       signal: controller.signal,
@@ -80,9 +105,7 @@ export async function createJob(jobData) {
     return res.json();
   } catch (err) {
     clearTimeout(timeoutId);
-    if (err.name === "AbortError") {
-      throw new Error("Request timed out");
-    }
+    if (err.name === "AbortError") throw new Error("Request timed out");
     throw err;
   }
 }
@@ -95,7 +118,7 @@ export async function deleteJob(id) {
     const res = await fetch(`${BASE_URL}/api/jobs/${id}`, {
       method: "DELETE",
       headers: {
-        "x-admin-key": import.meta.env.VITE_ADMIN_KEY || "",
+        "Authorization": `Bearer ${getToken()}`,
       },
       signal: controller.signal,
     });
@@ -108,9 +131,7 @@ export async function deleteJob(id) {
     return res.json();
   } catch (err) {
     clearTimeout(timeoutId);
-    if (err.name === "AbortError") {
-      throw new Error("Request timed out");
-    }
+    if (err.name === "AbortError") throw new Error("Request timed out");
     throw err;
   }
 }
@@ -153,7 +174,7 @@ export async function getApplications() {
     const res = await fetch(`${BASE_URL}/api/applications`, {
       signal: controller.signal,
       headers: {
-        "x-admin-key": import.meta.env.VITE_ADMIN_KEY || "",
+        "Authorization": `Bearer ${getToken()}`,
       },
     });
     clearTimeout(timeoutId);
@@ -165,9 +186,7 @@ export async function getApplications() {
     return res.json();
   } catch (err) {
     clearTimeout(timeoutId);
-    if (err.name === "AbortError") {
-      throw new Error("Request timed out — is the backend server running?");
-    }
+    if (err.name === "AbortError") throw new Error("Request timed out — is the backend server running?");
     throw err;
   }
 }
@@ -180,7 +199,7 @@ export async function deleteApplication(id) {
     const res = await fetch(`${BASE_URL}/api/applications/${id}`, {
       method: "DELETE",
       headers: {
-        "x-admin-key": import.meta.env.VITE_ADMIN_KEY || "",
+        "Authorization": `Bearer ${getToken()}`,
       },
       signal: controller.signal,
     });
@@ -193,9 +212,7 @@ export async function deleteApplication(id) {
     return res.json();
   } catch (err) {
     clearTimeout(timeoutId);
-    if (err.name === "AbortError") {
-      throw new Error("Request timed out");
-    }
+    if (err.name === "AbortError") throw new Error("Request timed out");
     throw err;
   }
 }

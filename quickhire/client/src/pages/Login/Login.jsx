@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar.jsx";
 import Footer from "../../components/Footer/Footer.jsx";
+import { adminLogin } from "../../api/api.js";
 
 function Login() {
   const navigate = useNavigate();
@@ -15,22 +16,23 @@ function Login() {
     setError("");
     setLoading(true);
 
-    // Simple admin check - in a real app, this would be an API call
-    const adminKey = import.meta.env.VITE_ADMIN_KEY;
-    
-    // Check if it's admin login
-    if (email === "admin@quickhire.com" && password === adminKey) {
-      // Store admin session
-      sessionStorage.setItem("adminKey", password);
-      sessionStorage.setItem("userEmail", email);
-      
-      // Redirect to admin dashboard
-      navigate("/admin");
-    } else {
+    // Only admin login is supported — email is just a UI check
+    if (email !== "admin@quickhire.com") {
       setError("Invalid email or password. Please try again.");
+      setLoading(false);
+      return;
     }
-    
-    setLoading(false);
+
+    try {
+      // Password is sent to the server as the admin key
+      // Server validates it and returns a JWT — raw key never stored
+      await adminLogin(password);
+      navigate("/admin");
+    } catch (err) {
+      setError(err.message || "Invalid email or password. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
